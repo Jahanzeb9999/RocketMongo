@@ -34,6 +34,14 @@ pub async fn find_user_by_username(db: &Database, username: &str) -> Result<Opti
     Ok(result)
 }
 
+pub async fn find_user_by_id(db: &Database, id: &str) -> Result<Option<User>, DbError> {
+    let collection = db.collection::<User>("users");
+    let object_id = ObjectId::parse_str(id).map_err(|_| DbError::InvalidId);
+    let filter = doc! {"_id": object_id};
+    let result = collection.find_one(filter, options).await?;
+    Ok(result)
+}
+
 
 pub async fn insert_user(db: &Database, user: &User) -> Result<String, DbError> {
     let collection = db.collection::<User>("users");
